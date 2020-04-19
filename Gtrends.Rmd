@@ -1,0 +1,94 @@
+---
+title: "Google trends on Climate change"
+output:
+  word_document: default
+  html_notebook: default
+---
+
+import packages
+
+```{r}
+library("gtrendsR")
+library("ggplot2")
+library("dplyr")
+require(maps)
+```
+
+
+Function to plot trends over a period of time (5 years) and over different regions
+
+```{r}
+plot_trends_time <- function(search_term){
+  
+  trends=gtrends(keyword=search_term)
+  plot(trends)
+}
+
+```
+
+
+```{r}
+plot_trends_geo <- function(search_term){
+  
+  trends=gtrends(keyword=search_term)
+  #plot(trends)
+  
+  world_map <- map_data("world")
+  t_countries<-trends$interest_by_country
+  t_countries$hit_levels<-"NA"
+  
+  #class(t_countries$hits)
+
+  #t_countries$hits[is.na(t_countries$hits)] <- 0
+  t_countries$hits[t_countries$hits == "<1"] <- 0
+  t_countries$hits<-as.numeric(t_countries$hits)
+  
+  # NAs introduced at this stage
+
+  t_countries$hit_levels[t_countries$hits == 0] <- "Less than 1"
+  
+  t_countries$hit_levels[(t_countries$hits>=1) & (t_countries$hits <= 10)] <- "1-10"
+  t_countries$hit_levels[ (t_countries$hits>10) & (t_countries$hits <= 25)] <- "10-25"
+ t_countries$hit_levels[ (t_countries$hits>25) & (t_countries$hits <=50) ] <- "25-50"
+ t_countries$hit_levels[ (t_countries$hits>50) & (t_countries$hits <=75) ] <- "50-75"
+ t_countries$hit_levels[ (t_countries$hits>75) & (t_countries$hits <=100) ] <- "75-100"
+ 
+ t_countries$location[t_countries$location=="United States"]<- "USA"
+ t_countries$location[t_countries$location=="United Kingdom"]<- "UK"
+ 
+  g<-ggplot() +
+  geom_map(data = world_map, map = world_map,
+           aes(x = long, y = lat, group = group, map_id=region),
+           fill = "white", colour = "#7f7f7f", size=0.5) + 
+  geom_map(data = t_countries, map=world_map,
+           aes(fill=hit_levels, map_id=location),
+           colour="#7f7f7f", size=0.5)
+  print(g)
+
+}
+```
+
+
+Search trends (interest over time and region) for keywords  
+
+
+
+```{r}
+keywords= c("control pollution","pollution hoax","clean plastic","energy transition", "plastic pollution ","global warming","carbon footprint","greta thunberg","greta thunberg fraud","climate change", "climate change hoax","solve global warming",
+"global warming hoax","improve energy sustainability","green new deal",
+"renewable energy pros","renewable energy cons","wind energy cons",
+"wind energy pros","solar energy pros","solar energy cons")
+```
+
+
+```{r}
+for (k in keywords){
+  
+  plot_trends_time(k)
+  plot_trends_geo(k)
+}
+```
+
+
+
+
