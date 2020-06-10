@@ -1,6 +1,8 @@
 # World-Energy-Council
 Analysis of public opinion on climate change
 
+Dataset: https://www.kaggle.com/edqian/twitter-climate-change-sentiment-dataset
+
 This project aims to analyze the sentiment of people regarding climate change and energy transition that we are experiencing today to derive 
 insights regarding the steps that can be taken to inform the masses better. This will help the World Energy Council shape their strategy for 
 different regions depending upon the public opinion there.
